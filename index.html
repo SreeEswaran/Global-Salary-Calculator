@@ -454,10 +454,10 @@
     const taxMax = country.taxMax / 100;
 
     const taxAvg = (taxMin + taxMax) / 2;
-
+/*
     /*
      * Gross salary
-     */
+     
 
     const grossAnnual = salary;
 
@@ -465,7 +465,7 @@
 
     /*
      * INR conversion
-     */
+     
 
     const grossAnnualINR =
       grossAnnual * exchangeRate;
@@ -475,7 +475,7 @@
 
     /*
      * Take-home calculations
-     */
+     
 
     const netAnnualLow =
       grossAnnual * (1 - taxMax);
@@ -497,7 +497,7 @@
 
     /*
      * INR take-home
-     */
+     
 
     const netAnnualINRLow =
       netAnnualLow * exchangeRate;
@@ -516,7 +516,29 @@
 
     const netMonthlyINRAvg =
       netMonthlyAvg * exchangeRate;
+    */
 
+    // Calculate annual and monthly salary
+    const annualSalary = salary;
+    const monthlySalary = annualSalary / 12;
+
+    // Convert to INR
+    const annualINR = annualSalary * currencyData.inr;
+    const monthlyINR = monthlySalary * currencyData.inr;
+
+    // Estimate tax using the midpoint of the configured range
+    // This is only a rough estimate, not a country-specific tax calculation.
+    const estimatedTaxRate = (currencyData.taxMin + currencyData.taxMax) / 2;
+
+    const estimatedAnnualTax = annualSalary * (estimatedTaxRate / 100);
+    const estimatedMonthlyTax = estimatedAnnualTax / 12;
+
+    const annualTakeHome = annualSalary - estimatedAnnualTax;
+    const monthlyTakeHome = annualTakeHome / 12;
+
+    const annualTakeHomeINR = annualTakeHome * currencyData.inr;
+    const monthlyTakeHomeINR = monthlyTakeHome * currencyData.inr;
+    
     /*
      * Update table
      */
