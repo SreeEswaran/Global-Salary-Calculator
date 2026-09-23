@@ -4,6 +4,8 @@ A simple salary calculator for checking what an international job offer looks li
 
 I made this mainly for comparing salaries across countries without having to manually calculate everything each time.
 
+**Live Demo:** [Global Salary Calculator](https://global-salary-calculator.vercel.app)
+
 ## What it does
 
 You enter:
@@ -81,7 +83,8 @@ There are no frameworks or external dependencies. The application runs directly 
 git clone https://github.com/SreeEswaran/global-salary-calculator.git
 ```
 2. Then open index.html in your browser.
-
+3. For an idea you can view the live demo as well.
+4. 
 That's all you need.
 
 ## Note
