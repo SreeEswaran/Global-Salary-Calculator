@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Global Salary Calculator</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, Arial, sans-serif;
+      background: #f5f7fb;
+      color: #1f2937;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+
+    h1 {
+      margin-bottom: 8px;
+      font-size: 32px;
+    }
+
+    .subtitle {
+      color: #6b7280;
+      margin-bottom: 30px;
+    }
+
+    .input-card {
+      background: white;
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      margin-bottom: 25px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    select,
+    input {
+      width: 100%;
+      padding: 13px;
+      font-size: 16px;
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      outline: none;
+    }
+
+    select:focus,
+    input:focus {
+      border-color: #4f46e5;
+    }
+
+    .summary {
+      background: #111827;
+      color: white;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 25px;
+    }
+
+    .summary h2 {
+      margin-top: 0;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+    }
+
+    .summary-box {
+      background: rgba(255,255,255,0.08);
+      padding: 18px;
+      border-radius: 12px;
+    }
+
+    .summary-box small {
+      color: #cbd5e1;
+    }
+
+    .summary-box strong {
+      display: block;
+      font-size: 22px;
+      margin-top: 5px;
+    }
+
+    .table-card {
+      background: white;
+      padding: 24px;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 700px;
+    }
+
+    th,
+    td {
+      padding: 15px;
+      border-bottom: 1px solid #e5e7eb;
+      text-align: right;
+    }
+
+    th:first-child,
+    td:first-child {
+      text-align: left;
+    }
+
+    th {
+      background: #f9fafb;
+      font-size: 14px;
+    }
+
+    .average {
+      font-weight: 700;
+      background: #f3f4f6;
+    }
+
+    .note {
+      color: #6b7280;
+      font-size: 13px;
+      margin-top: 18px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 700px) {
+      .input-card {
+        grid-template-columns: 1fr;
+      }
+
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .container {
+        margin: 15px auto;
+      }
+
+      h1 {
+        font-size: 26px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <h1>🌍 Global Salary Calculator</h1>
+  <div class="subtitle">
+    Convert international salaries to INR and estimate monthly take-home pay.
+  </div>
+
+  <!-- INPUT -->
+  <div class="input-card">
+
+    <div>
+      <label for="currency">Original Currency</label>
+
+      <select id="currency">
+        <option value="USD">🇺🇸 USD — US Dollar</option>
+        <option value="SGD">🇸🇬 SGD — Singapore Dollar</option>
+        <option value="EUR">🇪🇺 EUR — Euro</option>
+        <option value="GBP">🇬🇧 GBP — British Pound</option>
+        <option value="CAD">🇨🇦 CAD — Canadian Dollar</option>
+        <option value="AUD">🇦🇺 AUD — Australian Dollar</option>
+        <option value="CHF">🇨🇭 CHF — Swiss Franc</option>
+        <option value="JPY">🇯🇵 JPY — Japanese Yen</option>
+        <option value="AED">🇦🇪 AED — UAE Dirham</option>
+        <option value="NZD">🇳🇿 NZD — New Zealand Dollar</option>
+      </select>
+    </div>
+
+    <div>
+      <label for="salary">Annual Salary</label>
+
+      <input
+        type="number"
+        id="salary"
+        placeholder="e.g. 100000"
+        min="0"
+        value="100000"
+      />
+    </div>
+  </div>
+
+  <!-- SUMMARY -->
+  <div class="summary">
+
+    <h2>Estimated Take-Home</h2>
+
+    <div class="summary-grid">
+
+      <div class="summary-box">
+        <small>Average Annual Take-Home</small>
+        <strong id="avgAnnual">—</strong>
+      </div>
+
+      <div class="summary-box">
+        <small>Average Monthly Take-Home</small>
+        <strong id="avgMonthly">—</strong>
+      </div>
+
+      <div class="summary-box">
+        <small>Average Monthly Take-Home (INR)</small>
+        <strong id="avgMonthlyINR">—</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- DETAILS -->
+  <div class="table-card">
+    <h2>Salary Breakdown</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Calculation</th>
+          <th>Low</th>
+          <th>High</th>
+          <th>Average</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        <tr>
+          <td>Annual Gross</td>
+          <td id="grossLow"></td>
+          <td id="grossHigh"></td>
+          <td id="grossAvg" class="average"></td>
+        </tr>
+
+        <tr>
+          <td>Annual Gross (INR)</td>
+          <td id="grossINRLow"></td>
+          <td id="grossINRHigh"></td>
+          <td id="grossINRAvg" class="average"></td>
+        </tr>
+
+        <tr>
+          <td>Monthly Gross</td>
+          <td id="monthlyLow"></td>
+          <td id="monthlyHigh"></td>
+          <td id="monthlyAvg" class="average"></td>
+        </tr>
+
+        <tr>
+          <td>Monthly Gross (INR)</td>
+          <td id="monthlyINRLow"></td>
+          <td id="monthlyINRHigh"></td>
+          <td id="monthlyINRAvg" class="average"></td>
+        </tr>
+
+        <tr>
+          <td>Estimated Tax + Deductions</td>
+          <td id="taxLow"></td>
+          <td id="taxHigh"></td>
+          <td id="taxAvg" class="average"></td>
+        </tr>
+
+        <tr>
+          <td>Annual Take-Home</td>
+          <td id="netAnnualLow"></td>
+          <td id="netAnnualHigh"></td>
+          <td id="netAnnualAvg" class="average"></td>
+        </tr>
+
+        <tr>
+          <td>Annual Take-Home (INR)</td>
+          <td id="netAnnualINRLow"></td>
+          <td id="netAnnualINRHigh"></td>
+          <td id="netAnnualINRAvg" class="average"></td>
+        </tr>
+
+        <tr>
+          <td><strong>Monthly Take-Home</strong></td>
+          <td id="netMonthlyLow"></td>
+          <td id="netMonthlyHigh"></td>
+          <td id="netMonthlyAvg" class="average"></td>
+        </tr>
+
+        <tr>
+          <td><strong>Monthly Take-Home (INR)</strong></td>
+          <td id="netMonthlyINRLow"></td>
+          <td id="netMonthlyINRHigh"></td>
+          <td id="netMonthlyINRAvg" class="average"></td>
+        </tr>
+
+      </tbody>
+    </table>
+
+    <div class="note">
+      Estimates are intended for general salary comparison only.
+      Actual taxes depend on residency, filing status, deductions,
+      state/province, social-security contributions and other individual factors.
+    </div>
+  </div>
+</div>
+<script>
+
+  /*
+   * ============================================
+   * CONFIGURATION
+   * ============================================
+   *
+   * Exchange rates are approximate INR values.
+   *
+   * Tax/deduction ranges are intentionally broad
+   * because this is a salary comparison calculator,
+   * NOT a tax filing calculator.
+   */
+
+  const countries = {
+
+    USD: {
+      symbol: "$",
+      name: "USD",
+      inr: 95.61,
+
+      // Approximate effective tax + mandatory deductions
+      taxMin: 15,
+      taxMax: 30
+    },
+
+    SGD: {
+      symbol: "S$",
+      name: "SGD",
+      inr: 74.7,
+      taxMin: 5,
+      taxMax: 18
+    },
+
+    EUR: {
+      symbol: "€",
+      name: "EUR",
+      inr: 112.0,
+      taxMin: 20,
+      taxMax: 40
+    },
+
+    GBP: {
+      symbol: "£",
+      name: "GBP",
+      inr: 129.0,
+      taxMin: 20,
+      taxMax: 40
+    },
+
+    CAD: {
+      symbol: "C$",
+      name: "CAD",
+      inr: 69.0,
+      taxMin: 20,
+      taxMax: 35
+    },
+
+    AUD: {
+      symbol: "A$",
+      name: "AUD",
+      inr: 67.0,
+      taxMin: 20,
+      taxMax: 35
+    },
+
+    CHF: {
+      symbol: "CHF",
+      name: "CHF",
+      inr: 120.0,
+      taxMin: 12,
+      taxMax: 30
+    },
+
+    JPY: {
+      symbol: "¥",
+      name: "JPY",
+      inr: 0.65,
+      taxMin: 15,
+      taxMax: 30
+    },
+
+    AED: {
+      symbol: "AED",
+      name: "AED",
+      inr: 26.0,
+      taxMin: 0,
+      taxMax: 5
+    },
+
+    NZD: {
+      symbol: "NZ$",
+      name: "NZD",
+      inr: 55.0,
+      taxMin: 20,
+      taxMax: 35
+    }
+
+  };
+
+  function formatNumber(value, decimals = 0) {
+
+    return new Intl.NumberFormat("en-IN", {
+      minimumFractionDigits: decimals,
+      maximumFractionDigits: decimals
+    }).format(value);
+
+  }
+
+  function money(value, symbol) {
+
+    return symbol + formatNumber(value);
+
+  }
+
+  function calculate() {
+
+    const currencyCode =
+      document.getElementById("currency").value;
+
+    const salary =
+      Number(document.getElementById("salary").value);
+
+    if (!salary || salary <= 0) {
+      return;
+    }
+
+    const country = countries[currencyCode];
+
+    const symbol = country.symbol;
+
+    const exchangeRate = country.inr;
+
+    const taxMin = country.taxMin / 100;
+
+    const taxMax = country.taxMax / 100;
+
+    const taxAvg = (taxMin + taxMax) / 2;
+
+    /*
+     * Gross salary
+     */
+
+    const grossAnnual = salary;
+
+    const grossMonthly = salary / 12;
+
+    /*
+     * INR conversion
+     */
+
+    const grossAnnualINR =
+      grossAnnual * exchangeRate;
+
+    const grossMonthlyINR =
+      grossMonthly * exchangeRate;
+
+    /*
+     * Take-home calculations
+     */
+
+    const netAnnualLow =
+      grossAnnual * (1 - taxMax);
+
+    const netAnnualHigh =
+      grossAnnual * (1 - taxMin);
+
+    const netAnnualAvg =
+      grossAnnual * (1 - taxAvg);
+
+    const netMonthlyLow =
+      netAnnualLow / 12;
+
+    const netMonthlyHigh =
+      netAnnualHigh / 12;
+
+    const netMonthlyAvg =
+      netAnnualAvg / 12;
+
+    /*
+     * INR take-home
+     */
+
+    const netAnnualINRLow =
+      netAnnualLow * exchangeRate;
+
+    const netAnnualINRHigh =
+      netAnnualHigh * exchangeRate;
+
+    const netAnnualINRAvg =
+      netAnnualAvg * exchangeRate;
+
+    const netMonthlyINRLow =
+      netMonthlyLow * exchangeRate;
+
+    const netMonthlyINRHigh =
+      netMonthlyHigh * exchangeRate;
+
+    const netMonthlyINRAvg =
+      netMonthlyAvg * exchangeRate;
+
+    /*
+     * Update table
+     */
+
+    document.getElementById("grossLow").textContent =
+      money(grossAnnual, symbol);
+
+    document.getElementById("grossHigh").textContent =
+      money(grossAnnual, symbol);
+
+    document.getElementById("grossAvg").textContent =
+      money(grossAnnual, symbol);
+
+    document.getElementById("grossINRLow").textContent =
+      "₹" + formatNumber(grossAnnualINR);
+
+    document.getElementById("grossINRHigh").textContent =
+      "₹" + formatNumber(grossAnnualINR);
+
+    document.getElementById("grossINRAvg").textContent =
+      "₹" + formatNumber(grossAnnualINR);
+
+    document.getElementById("monthlyLow").textContent =
+      money(grossMonthly, symbol);
+
+    document.getElementById("monthlyHigh").textContent =
+      money(grossMonthly, symbol);
+
+    document.getElementById("monthlyAvg").textContent =
+      money(grossMonthly, symbol);
+
+
+    document.getElementById("monthlyINRLow").textContent =
+      "₹" + formatNumber(grossMonthlyINR);
+
+    document.getElementById("monthlyINRHigh").textContent =
+      "₹" + formatNumber(grossMonthlyINR);
+
+    document.getElementById("monthlyINRAvg").textContent =
+      "₹" + formatNumber(grossMonthlyINR);
+
+    /*
+     * Tax
+     */
+
+    document.getElementById("taxLow").textContent =
+      taxMin * 100 + "%";
+
+    document.getElementById("taxHigh").textContent =
+      taxMax * 100 + "%";
+
+    document.getElementById("taxAvg").textContent =
+      (taxAvg * 100).toFixed(1) + "%";
+
+    /*
+     * Net annual
+     */
+
+    document.getElementById("netAnnualLow").textContent =
+      money(netAnnualLow, symbol);
+
+    document.getElementById("netAnnualHigh").textContent =
+      money(netAnnualHigh, symbol);
+
+    document.getElementById("netAnnualAvg").textContent =
+      money(netAnnualAvg, symbol);
+
+    /*
+     * Net annual INR
+     */
+
+    document.getElementById("netAnnualINRLow").textContent =
+      "₹" + formatNumber(netAnnualINRLow);
+
+    document.getElementById("netAnnualINRHigh").textContent =
+      "₹" + formatNumber(netAnnualINRHigh);
+
+    document.getElementById("netAnnualINRAvg").textContent =
+      "₹" + formatNumber(netAnnualINRAvg);
+
+    /*
+     * Net monthly
+     */
+
+    document.getElementById("netMonthlyLow").textContent =
+      money(netMonthlyLow, symbol);
+
+    document.getElementById("netMonthlyHigh").textContent =
+      money(netMonthlyHigh, symbol);
+
+    document.getElementById("netMonthlyAvg").textContent =
+      money(netMonthlyAvg, symbol);
+
+    /*
+     * Net monthly INR
+     */
+
+    document.getElementById("netMonthlyINRLow").textContent =
+      "₹" + formatNumber(netMonthlyINRLow);
+
+    document.getElementById("netMonthlyINRHigh").textContent =
+      "₹" + formatNumber(netMonthlyINRHigh);
+
+    document.getElementById("netMonthlyINRAvg").textContent =
+      "₹" + formatNumber(netMonthlyINRAvg);
+
+    /*
+     * Summary
+     */
+
+    document.getElementById("avgAnnual").textContent =
+      money(netAnnualAvg, symbol);
+
+    document.getElementById("avgMonthly").textContent =
+      money(netMonthlyAvg, symbol);
+
+    document.getElementById("avgMonthlyINR").textContent =
+      "₹" + formatNumber(netMonthlyINRAvg);
+
+  }
+
+  /*
+   * Recalculate whenever input changes.
+   */
+
+  document
+    .getElementById("currency")
+    .addEventListener("change", calculate);
+
+  document
+    .getElementById("salary")
+    .addEventListener("input", calculate);
+
+  // Initial calculation
+  calculate();
+
+</script>
+</body>
+</html>
